@@ -1,6 +1,6 @@
 name: test
 on: push
-jobs:
+jobs: 
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
