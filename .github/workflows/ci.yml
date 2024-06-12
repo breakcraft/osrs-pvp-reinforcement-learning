@@ -51,8 +51,8 @@ jobs:
       run: |
         source ~/.bashrc
         conda activate pvp
-        pre-commit install
-        pre-commit run --all-files
+        pre-commit install --config pvp-ml/.pre-commit-config.yaml
+        pre-commit run --all-files --config pvp-ml/.pre-commit-config.yaml
 
     - name: Run tests with coverage
       run: |
