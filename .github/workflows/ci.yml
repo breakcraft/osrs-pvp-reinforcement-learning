@@ -22,13 +22,16 @@ jobs:
         auto-update-conda: true
         auto-activate-base: false
 
+    - name: Initialize Conda
+      run: |
+        conda init bash
+
     - name: Create Conda environment
       run: conda env create -f pvp-ml/environment.yml
 
     - name: Activate Conda environment
       shell: bash -l {0}
       run: |
-        echo "conda activate pvp" >> ~/.bashrc
         source ~/.bashrc
         conda activate pvp
 
@@ -39,7 +42,10 @@ jobs:
         pip install -e .
 
     - name: Install pre-commit
-      run: conda install -c conda-forge pre-commit
+      run: |
+        source ~/.bashrc
+        conda activate pvp
+        conda install -c conda-forge pre-commit
 
     - name: Run pre-commit hooks
       run: |
