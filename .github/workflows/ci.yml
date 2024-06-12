@@ -26,23 +26,24 @@ jobs:
       run: conda env create -f pvp-ml/environment.yml
 
     - name: Activate Conda environment
-      run: echo "conda activate pvp"
+      shell: bash -l {0}
+      run: |
+        echo "conda activate pvp" >> ~/.bashrc
+        source ~/.bashrc
+        conda activate pvp
 
     - name: Install additional dependencies
       run: |
-        source ~/conda/bin/activate pvp
         python -m pip install --upgrade pip
         pip install -e .
 
     - name: Install pre-commit hooks
       run: |
-        source ~/conda/bin/activate pvp
         pre-commit install
         pre-commit run --all-files
 
     - name: Run tests with coverage
       run: |
-        source ~/conda/bin/activate pvp
         pip install pytest-cov
         pytest --cov=src --cov-report=xml
 
