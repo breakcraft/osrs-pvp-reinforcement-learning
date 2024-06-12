@@ -38,14 +38,20 @@ jobs:
         cd pvp-ml
         pip install -e .
 
-    - name: Install pre-commit hooks
+    - name: Install pre-commit
+      run: conda install -c conda-forge pre-commit
+
+    - name: Run pre-commit hooks
       run: |
-        conda install -c conda-forge pre-commit
+        source ~/.bashrc
+        conda activate pvp
         pre-commit install
         pre-commit run --all-files
 
     - name: Run tests with coverage
       run: |
+        source ~/.bashrc
+        conda activate pvp
         pip install pytest-cov
         pytest --cov=src --cov-report=xml
 
@@ -57,6 +63,8 @@ jobs:
 
     - name: Deploy to cluster (if needed)
       run: |
+        source ~/.bashrc
+        conda activate pvp
         if [[ -f pvp-ml/cluster.yml ]]; then
           echo "Setting up and deploying to cluster"
           # Add cluster deployment commands here
