@@ -27,14 +27,14 @@ jobs:
           set -x
           echo "Upgrading pip"
           python -m pip install --upgrade pip
-          echo "Installing pytest"
-          pip install pytest
+          echo "Installing required packages"
+          pip install torch psutil numpy
           if [ -f requirements.txt ]; then
             echo "Installing dependencies from requirements.txt"
             pip install -r requirements.txt
           fi
-          echo "Verifying pytest installation"
-          pip show pytest
+          echo "Verifying installations"
+          pip show pytest torch psutil numpy
 
       - name: Run Tests
         run: |
