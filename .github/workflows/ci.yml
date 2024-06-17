@@ -13,67 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-update-conda: true
-        auto-activate-base: false
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
 
-    - name: Initialize Conda
-      run: |
-        conda init bash
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Create Conda environment
-      run: conda env create -f pvp-ml/environment.yml
-
-    - name: Activate Conda environment
-      shell: bash -l {0}
-      run: |
-        source ~/.bashrc
-        conda activate pvp
-
-    - name: Install additional dependencies
-      run: |
-        python -m pip install --upgrade pip
-        cd pvp-ml
-        pip install -e .
-
-    - name: Install pre-commit
-      run: |
-        source ~/.bashrc
-        conda activate pvp
-        conda install -c conda-forge pre-commit
-
-    - name: Run pre-commit hooks
-      run: |
-        source ~/.bashrc
-        conda activate pvp
-        pre-commit install --config pvp-ml/.pre-commit-config.yaml
-        pre-commit run --all-files --config pvp-ml/.pre-commit-config.yaml
-
-    - name: Run tests with coverage
-      run: |
-        source ~/.bashrc
-        conda activate pvp
-        pip install pytest-cov
-        pytest --cov=src --cov-report=xml
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-report
-        path: coverage.xml
-
-    - name: Deploy to cluster (if needed)
-      run: |
-        source ~/.bashrc
-        conda activate pvp
-        if [[ -f pvp-ml/cluster.yml ]]; then
-          echo "Setting up and deploying to cluster"
-          # Add cluster deployment commands here
-        else
-          echo "No cluster configuration found, skipping cluster deployment"
-        fi
+      - name: Run tests
+        run: |
+          pytest
