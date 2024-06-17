@@ -28,13 +28,24 @@ jobs:
           echo "Upgrading pip"
           python -m pip install --upgrade pip
           echo "Installing required packages"
-          pip install torch psutil numpy
+          pip install torch psutil numpy pytest
           if [ -f requirements.txt ]; then
             echo "Installing dependencies from requirements.txt"
             pip install -r requirements.txt
           fi
           echo "Verifying installations"
           pip show pytest torch psutil numpy
+
+      - name: Verify Mypy Config
+        run: |
+          if [ ! -f pvp-ml/setupl.cfg ]; then
+            echo "Mypy config file not found!"
+            exit 1
+          fi
+
+      - name: Run Mypy
+        run: |
+          cd pvp-ml && mypy pvp_ml test --config=setupl.cfg
 
       - name: Run Tests
         run: |
