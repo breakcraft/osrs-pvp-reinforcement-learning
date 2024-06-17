@@ -28,13 +28,13 @@ jobs:
           echo "Upgrading pip"
           python -m pip install --upgrade pip
           echo "Installing required packages"
-          pip install torch psutil numpy pytest
+          pip install torch psutil numpy pytest mypy
           if [ -f requirements.txt ]; then
             echo "Installing dependencies from requirements.txt"
             pip install -r requirements.txt
           fi
           echo "Verifying installations"
-          pip show pytest torch psutil numpy
+          pip show pytest torch psutil numpy mypy
 
       - name: Verify Mypy Config
         run: |
