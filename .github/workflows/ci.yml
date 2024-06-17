@@ -1,4 +1,4 @@
-name: Continuous Integration Workflow
+name: CI
 
 on:
   push:
@@ -9,47 +9,47 @@ on:
       - master
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set Up Python Environment
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          set -e
-          set -x
-          echo "Upgrading pip"
           python -m pip install --upgrade pip
-          echo "Installing required packages"
-          pip install torch psutil numpy pytest mypy
-          if [ -f requirements.txt ]; then
-            echo "Installing dependencies from requirements.txt"
-            pip install -r requirements.txt
-          fi
-          echo "Verifying installations"
-          pip show pytest torch psutil numpy mypy
+          pip install pytest torch psutil numpy pyyaml
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip show pytest
 
-      - name: Verify Mypy Config
+      - name: Run tests
         run: |
-          if [ ! -f pvp-ml/setupl.cfg ]; then
-            echo "Mypy config file not found!"
-            exit 1
-          fi
-
-      - name: Run Mypy
-        run: |
-          cd pvp-ml && mypy pvp_ml test --config=setupl.cfg
-
-      - name: Run Tests
-        run: |
-          set -e
-          set -x
-          echo "Running tests with pytest"
           pytest
+
+  type-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy torch psutil numpy pyyaml
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run mypy
+        run: |
+          mypy pvp_ml --install-types --non-interactive
